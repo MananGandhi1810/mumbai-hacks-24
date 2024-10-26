@@ -25,14 +25,6 @@ const historicNames = [
     label: "Oppenheimer",
   },
   {
-    value: "ratan.tata",
-    label: "Ratan Tata",
-  },
-  {
-    value: "kalpana.chawla",
-    label: "Kalpana Chawla",
-  },
-  {
     value: "anne.frank",
     label: "Anne Frank",
   },

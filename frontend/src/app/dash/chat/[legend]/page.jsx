@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Trash2, ArrowLeft } from "lucide-react";
+import { Send, Trash2, ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import axios from "axios";
 
@@ -20,9 +20,7 @@ const personColors = {
 
 const personImages = {
   oppenheimer: "/oppen.jpeg",
-  "ratan-tata": "/ratan.jpeg",
-  "kalpana-chawla": "/kalpana.jpeg",
-  "anne-frank": "/anne.jpeg",
+  "anne.frank": "/anne.jpg",
 };
 
 export default function ChatPage({ params: paramsPromise }) {
@@ -33,6 +31,7 @@ export default function ChatPage({ params: paramsPromise }) {
   const [chatHistory, setChatHistory] = useState([]);
   const [input, setInput] = useState("");
   const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
+  const [isGeneratingText, setIsGeneratingText] = useState(false);
   const legend = params.legend.replace(/-/g, ".");
   const scrollAreaRef = useRef(null);
   const lastMessageRef = useRef(null);
@@ -48,6 +47,7 @@ export default function ChatPage({ params: paramsPromise }) {
         setChatHistory((prev) => [...prev, newMessage]);
         setInput("");
         setIsWaitingForResponse(true);
+        setIsGeneratingText(true);
 
         // Prepare the request body
         const requestBody = {
@@ -86,6 +86,7 @@ export default function ChatPage({ params: paramsPromise }) {
           console.error("Error:", error);
         } finally {
           setIsWaitingForResponse(false);
+          setIsGeneratingText(false);
         }
       }
     },
@@ -118,7 +119,7 @@ export default function ChatPage({ params: paramsPromise }) {
         <CardContent className="flex flex-col p-4 overflow-hidden h-[80vh] md:h-[90vh] border-t">
           <div className="flex items-center mb-4">
             <Button variant="ghost" size="icon" asChild className="mr-2">
-              <Link href="/">
+              <Link href="/dash">
                 <ArrowLeft className="h-4 w-4" />
                 <span className="sr-only">Back to home</span>
               </Link>
@@ -148,7 +149,7 @@ export default function ChatPage({ params: paramsPromise }) {
                     <AvatarImage
                       src={
                         message.role === "user"
-                          ? "/user.jpeg"
+                          ? "/usr.jpeg"
                           : personImages[message.character]
                       }
                       className="h-full w-full object-cover"
@@ -170,6 +171,23 @@ export default function ChatPage({ params: paramsPromise }) {
                 </div>
               </div>
             ))}
+            {isGeneratingText && (
+              <div className="flex justify-start mb-4">
+                <div className="flex flex-row items-start gap-2 max-w-[80%]">
+                  <Avatar className="w-8 h-8">
+                    <AvatarImage
+                      src={personImages[legend]}
+                      className="h-full w-full object-cover"
+                      alt={legend}
+                    />
+                    <AvatarFallback>AI</AvatarFallback>
+                  </Avatar>
+                  <div className="rounded-2xl p-3 bg-gray-100 text-black">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  </div>
+                </div>
+              </div>
+            )}
           </ScrollArea>
         </CardContent>
       </Card>
@@ -192,9 +210,13 @@ export default function ChatPage({ params: paramsPromise }) {
           type="submit"
           size="icon"
           className="rounded-xl"
-          disabled={isWaitingForResponse}
+          disabled={isWaitingForResponse || !input.trim()}
         >
-          <Send className="size-6" />
+          {isWaitingForResponse ? (
+            <Loader2 className="h-6 w-6 animate-spin" />
+          ) : (
+            <Send className="size-6" />
+          )}
           <span className="sr-only">Send</span>
         </Button>
         <Button

@@ -6,25 +6,30 @@ import { ComboboxDemo } from "@/components/ui/combobox";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Send } from "lucide-react";
+import { Loader2, Send } from "lucide-react";
 
 const legends = [
   { value: "oppenheimer", label: "Oppenheimer" },
-  { value: "ratan-tata", label: "Ratan Tata" },
-  { value: "kalpana-chawla", label: "Kalpana Chawla" },
   { value: "anne-frank", label: "Anne Frank" },
 ];
 
-export default function Home() {
+export default function Component() {
   const [selectedLegend, setSelectedLegend] = useState("");
   const [input, setInput] = useState("");
+  const [bttnclk, setBttnclk] = useState(false);
   const router = useRouter();
 
   const handleSend = () => {
     if (selectedLegend && input.trim()) {
-      router.push(
-        `/dash/chat/${selectedLegend}?message=${encodeURIComponent(input.trim())}`
-      );
+      setBttnclk(true);
+      // Simulate a delay before navigation
+      setTimeout(() => {
+        router.push(
+          `/dash/chat/${selectedLegend}?message=${encodeURIComponent(
+            input.trim()
+          )}`
+        );
+      }, 1000);
     }
   };
 
@@ -60,15 +65,20 @@ export default function Home() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               className="flex-grow rounded-xl py-7"
-              disabled={!selectedLegend}
+              disabled={!selectedLegend || bttnclk}
             />
             <Button
               type="submit"
-              disabled={!selectedLegend || !input.trim()}
-              className="rounded-xl"
+              disabled={!selectedLegend || !input.trim() || bttnclk}
+              onClick={handleSend}
+              className="rounded-xl transition-all duration-200 ease-in-out"
             >
-              <Send className="size-7 mr-2" />
-              Start Chat
+              {bttnclk ? (
+                <Loader2 className="size-7 mr-2 animate-spin" />
+              ) : (
+                <Send className="size-7 mr-2" />
+              )}
+              {bttnclk ? "Starting..." : "Start Chat"}
             </Button>
           </form>
         </CardFooter>
