@@ -14,3 +14,7 @@ We are building an AI-powered platform, which allows students to chat with histo
 -   Flask
 -   LLaMa
 -   Faiss
+
+## Demo of Our Project
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/IKqheIlietE/0.jpg)](https://www.youtube.com/watch?v=IKqheIlietE)
